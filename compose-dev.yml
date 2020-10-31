@@ -1,0 +1,29 @@
+version: "3"
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27117:27017"
+    expose:
+      - 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  metadata:
+    build: .
+    restart: always
+    volumes:
+      - ./app:/app:z
+    ports:
+      - "8080:80"
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "2m"
+          max-file: "10"
+    environment:
+      - USE_SOCK_FILE=False
+      - MONGO_CONNECTION_STRING=mongodb://root:root@mongo:27017
