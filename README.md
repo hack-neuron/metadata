@@ -32,4 +32,4 @@
 
 На данном адресе расположен `Swagger UI`, который дает возможность опробовать `API` напрямую из web-интерфейса.
 
-![screenshoot](screenshoot.png)
+![screenshot](screenshot.png)
