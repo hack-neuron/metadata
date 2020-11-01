@@ -42,11 +42,13 @@ class UpdateData(BaseModel):
 
 @app.on_event('startup')
 async def startup_event():
+    """Создаём индекс в БД при запуске приложения, если его не существует."""
     await db.applications.create_index('name', unique=True)
 
 
 @app.post('/create_application')
 async def create_application(application: Application):
+    """Создание приложения."""
     app_dict = application.dict()
     app_dict['password'] = app_dict.pop('hashed_password')
     try:
@@ -58,6 +60,7 @@ async def create_application(application: Application):
 
 @app.get('/get_application')
 async def get_application(name: str):
+    """Получает всю информацию о приложении из БД."""
     application = await db.applications.find_one({'name': name})
     if application is None:
         raise HTTPException(status_code=404, detail='Application not found!')
@@ -67,6 +70,7 @@ async def get_application(name: str):
 
 @app.delete('/delete_application')
 async def delete_application(name: str):
+    """Удаление приложения."""
     result = await db.applications.delete_many({'name': name})
     if not result.deleted_count:
         raise HTTPException(status_code=404, detail='Application not found!')
@@ -75,6 +79,7 @@ async def delete_application(name: str):
 
 @app.post('/update_token')
 async def update_token(data: UpdateData):
+    """Обновление токена приложения."""
     result = await db.applications.update_one({'name': data.name}, {'$set': {'token': data.token}})
     if not result.modified_count:
         raise HTTPException(status_code=404, detail='Application not found!')
